@@ -95,7 +95,7 @@ def transcribe(
 
     output = pipe(
         audio,
-        generate_kwargs={"task": "transcribe"},
+        #generate_kwargs={"task": "transcribe"},
         batch_size=16,
         return_timestamps=show_timestamps,
     )

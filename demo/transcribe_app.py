@@ -14,8 +14,8 @@ def get_dropdown_model_ids():
             "openai/whisper-tiny.en",
             "openai/whisper-small.en",
             "openai/whisper-medium.en",
-            "openai/whisper-large-v3.en",
-            "openai/whisper-large-v3-turbo.en",
+            "openai/whisper-large-v3",
+            "openai/whisper-large-v3-turbo",
         ]
     )
 

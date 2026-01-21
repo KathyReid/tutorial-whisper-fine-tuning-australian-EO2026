@@ -19,6 +19,6 @@ This tutorial is based on [the Speech-to-Text Finetuning Blueprint](https://mozi
 
 Before starting this Tutorial, you should: 
 
-1. Create an account on the [Mozilla Data Collective]() platform, and have downloaded the Common Voice Australian English dataset @TODO link to the dataset here when I am sure that it works properly with the tutorial.
-
-2. @TODO Google Colab link to launch in Google Colab (then the Notebook should run the rest of the tutorial)
+1. Create an account on the [Mozilla Data Collective](https://datacollective.mozillafoundation.org/) platform
+2. Download the [Common Voice v24 Australian dataset](https://datacollective.mozillafoundation.org/datasets/cmko7havo02f5nw07rbwwhowe)
+3. Open the [Tutorial Notebook](EO2026_teach_whisper_to_speak_Australian.ipynb) in Google Colab 

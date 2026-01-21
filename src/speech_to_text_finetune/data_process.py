@@ -14,6 +14,9 @@ from transformers import WhisperProcessor
 from datasets import load_dataset, DatasetDict, Audio, Dataset, load_from_disk
 from loguru import logger
 
+from datasets import Dataset, DatasetDict
+from sklearn.model_selection import train_test_split
+
 
 def try_find_processed_version(
     dataset_id: str, language_id: str | None = None
@@ -85,6 +88,12 @@ def load_dataset_from_dataset_id(
     Raises:
         ValueError: If the dataset cannot be found locally or on HuggingFace
     """
+    try:
+        dataset = load_my_dataset()
+        return dataset, _get_local_proc_dataset_path(dataset_id)
+    except FileNotFoundError:
+        pass
+
     try:
         dataset = _load_local_common_voice(dataset_id)
         return dataset, _get_local_proc_dataset_path(dataset_id)
@@ -259,6 +268,43 @@ def load_and_proc_hf_fleurs(
         f"automatically use this processed version."
     )
     return dataset
+
+def load_my_dataset(
+    csv_path: str = "/content/commonvoice-v24_en-AU/commonvoice-v24_en-AU.csv",
+    audio_dir: str = "/content/audio_files",
+    train_split: float = 0.8
+) -> DatasetDict:
+    """
+    Load and process your custom dataset from the given directory.
+
+    Args:
+        csv_path (str): Path to the CSV file containing your dataset metadata.
+        audio_dir (str): Path to the directory containing the audio files.
+        train_split (float): Percentage of data to use for training.
+
+    Returns:
+        DatasetDict: HF Dataset dictionary that consists of two distinct Datasets (train and test)
+    """
+    # Read the file in
+    df = pd.read_csv(csv_path)
+
+    # Only keep the columns we need - use 'path' for audio and 'sentence' for text
+    df = df[["path", "sentence"]]
+
+    # Rename 'path' to 'audio' for consistency with the processing pipeline
+    df = df.rename(columns={"path": "audio"})
+
+    # Replace the relative path to the audio clip with the absolute path
+    df["audio"] = df["audio"].apply(lambda p: os.path.join(audio_dir, p))
+
+    # Split the DataFrame into train and test sets
+    train_df, test_df = train_test_split(df, train_size=train_split, random_state=42)
+
+    # Return the DatasetDict containing the train and test datasets
+    return DatasetDict({
+        "train": Dataset.from_pandas(train_df, preserve_index=False),
+        "test": Dataset.from_pandas(test_df, preserve_index=False)
+    })
 
 
 def load_subset_of_dataset(dataset: Dataset, n_samples: int) -> Dataset:
